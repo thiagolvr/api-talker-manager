@@ -1,6 +1,11 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const { readTalkerFile, validateLogin } = require('./middlewares');
+const {
+  readTalkerFile,
+  validateLogin,
+  validation,
+  writeTalkerFile,
+} = require('./middlewares');
 const generateToken = require('./utils/generateToken');
 
 const app = express();
@@ -22,8 +27,7 @@ app.get('/talker', async (_req, res) => {
 app.get('/talker/:id', async (req, res) => {
   const { id } = req.params;
   const talkerContent = await readTalkerFile();
-  const result = talkerContent
-      .find((talker) => +talker.id === +id);
+  const result = talkerContent.find((talker) => +talker.id === +id);
 
   if (!result) {
     return res.status(404).json({
@@ -39,12 +43,32 @@ app.post('/login', validateLogin, async (req, res) => {
   let token;
 
   if (email && password) {
-   token = generateToken(16);
+    token = generateToken(16);
   }
   return res.status(200).json({
-      token,
-    });
+    token,
+  });
 });
+
+app.post(
+  '/talker',
+  validation.validateAuthorization,
+  validation.validateName,
+  validation.validateAge,
+  validation.validateWatchedAt,
+  validation.validateRate,
+  async (req, res) => {
+    const { name, age, talk } = req.body;
+    const talkers = await readTalkerFile();
+    const id = talkers.length + 1;
+    const talker = { name, age, talk, id };
+
+    talkers.push(talker);
+    await writeTalkerFile(talkers);
+
+    return res.status(201).json(talker);
+  },
+);
 
 app.listen(PORT, () => {
   console.log('Online');
