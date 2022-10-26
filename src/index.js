@@ -70,6 +70,25 @@ app.post(
   },
 );
 
+app.put('/talker/:id', 
+validation.validateAuthorization,
+validation.validateName,
+validation.validateAge,
+validation.validateWatchedAt,
+validation.validateRate,
+ async (req, res) => {
+  const { name, age, talk } = req.body;
+  const { id } = req.params;
+  const talkers = await readTalkerFile();
+  const talker = { id: +id, name, age, talk };
+
+  talkers.push(talker);
+
+  await writeTalkerFile(talkers);
+
+  return res.status(200).json(talker);
+});
+
 app.listen(PORT, () => {
   console.log('Online');
 });
