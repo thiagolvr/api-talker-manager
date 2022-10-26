@@ -4,8 +4,7 @@ const path = require('path');
 const readTalkerFile = async () => {
   try {
       const talker = await fs.readFile(path.resolve(__dirname, '..', 'talker.json'));
-      const result = await JSON.parse(talker);
-      return result;
+      return await JSON.parse(talker);
   } catch (error) {
       return error;
   }
