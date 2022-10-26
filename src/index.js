@@ -20,14 +20,23 @@ app.get('/', (_request, response) => {
 });
 
 app.get('/talker', async (_req, res) => {
-  const talkerContent = await readTalkerFile();
-  return res.status(200).json(talkerContent);
+  const talkers = await readTalkerFile();
+  return res.status(200).json(talkers);
+});
+
+app.get('/talker/search', validation.validateAuthorization, async (req, res) => {
+  const { q } = req.query;
+
+  const talkers = await readTalkerFile();
+  const filter = talkers.filter(({ name }) => name.toLowerCase().includes(q.toLowerCase()));
+ 
+  return res.status(200).json(filter);
 });
 
 app.get('/talker/:id', async (req, res) => {
   const { id } = req.params;
-  const talkerContent = await readTalkerFile();
-  const result = talkerContent.find((talker) => +talker.id === +id);
+  const talkers = await readTalkerFile();
+  const result = talkers.find((talker) => +talker.id === +id);
 
   if (!result) {
     return res.status(404).json({
