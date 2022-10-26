@@ -17,8 +17,11 @@
   "dependencies": {
     "body-parser": "1.19.0",
     "crypto-js": "4.0.0",
+    "email-validator": "^2.0.4",
     "express": "4.17.1",
-    "express-rescue": "1.1.30"
+    "express-rescue": "1.1.30",
+    "i": "^0.3.7",
+    "npm": "^8.19.2"
   },
   "devDependencies": {
     "chai": "4.3.4",
