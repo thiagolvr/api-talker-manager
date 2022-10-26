@@ -89,6 +89,16 @@ validation.validateRate,
   return res.status(200).json(talker);
 });
 
+app.delete('/talker/:id', validation.validateAuthorization, async (req, res) => {
+  const { id } = req.params;
+
+  const talkers = await readTalkerFile();
+    const talkerDeleted = talkers.filter((talker) => +talker.id !== +id);
+    await writeTalkerFile(talkerDeleted);
+
+  return res.status(204).end();
+});
+
 app.listen(PORT, () => {
   console.log('Online');
 });
